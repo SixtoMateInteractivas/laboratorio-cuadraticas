@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Parábolas y Ecuaciones Cuadráticas</title>
+    <!-- Tailwind CSS para diseño responsivo mobile-first -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- ENCABEZADO Y HUD GLOBAL -->
+    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div>
+                <h1 class="text-lg md:text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                    Laboratorio de Parábolas
+                </h1>
+                <p class="text-xs text-slate-400">COBAO Plantel 21 Ojitlán | Pensamiento Matemático III</p>
+            </div>
+            
+            <!-- HUD de Puntuación y Racha -->
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-inner">
+                    <span class="text-amber-400 text-sm">⭐</span>
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Puntos</div>
+                        <div id="hud-score" class="text-sm font-bold text-amber-300">0 pts</div>
+                    </div>
+                </div>
+                <div class="bg-slate-800/80 border border-slate-700/60 rounded-xl px-3 py-1.5 flex items-center gap-2 shadow-inner">
+                    <span class="text-orange-400 text-sm">🔥</span>
+                    <div>
+                        <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Racha</div>
+                        <div id="hud-streak" class="text-sm font-bold text-orange-300">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN DE NIVELES -->
+        <div class="max-w-6xl mx-auto mt-3 overflow-x-auto no-scrollbar">
+            <nav id="level-tabs" class="flex gap-2 min-w-max pb-1">
+                <button onclick="switchLevel(0)" class="level-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 flex items-center gap-1.5">
+                    <span>Nivel 1</span> <span class="text-xs opacity-80 font-normal">| Cazador de Formas</span>
+                </button>
+                <button onclick="switchLevel(1)" class="level-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 flex items-center gap-1.5">
+                    <span>Nivel 2</span> <span class="text-xs opacity-80 font-normal">| Completar Cuadrados</span>
+                </button>
+                <button onclick="switchLevel(2)" class="level-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 flex items-center gap-1.5">
+                    <span>Nivel 3</span> <span class="text-xs opacity-80 font-normal">| Fábrica de Cohetes</span>
+                </button>
+                <button onclick="switchLevel(3)" class="level-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 flex items-center gap-1.5">
+                    <span>Nivel 4</span> <span class="text-xs opacity-80 font-normal">| Arquitecto de Parábolas</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="max-w-6xl mx-auto p-4 flex-1 w-full flex flex-col">
+
+        <!-- ================= NIVEL 1 ================= -->
+        <section id="level-0-view" class="level-view flex-1 flex flex-col gap-4">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl backdrop-blur">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-lg border border-indigo-500/30">Nivel 1: Identificación Aleatoria</span>
+                    <span id="l1-progress" class="text-xs text-slate-400 font-medium">Pregunta aleatoria</span>
+                </div>
+                <h2 class="text-base md:text-lg font-bold text-slate-100 mb-1">¿Es una ecuación cuadrática y cuál es su forma general?</h2>
+                <p class="text-xs md:text-sm text-slate-400 mb-4">Analiza la expresión algebraica generada al azar y decide si corresponde a una ecuación de segundo grado.</p>
+                
+                <div id="l1-card" class="bg-slate-950/80 border border-slate-800 rounded-2xl p-6 text-center my-4">
+                    <div id="l1-expression" class="text-2xl md:text-4xl font-black text-indigo-300 font-mono tracking-wide mb-6">3x² - 5x + 2 = 0</div>
+                    
+                    <div id="l1-step-1" class="flex flex-col sm:flex-row justify-center gap-3">
+                        <button onclick="answerL1(true)" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-emerald-600/20 active:scale-95 cursor-pointer">
+                            Sí es cuadrática ✅
+                        </button>
+                        <button onclick="answerL1(false)" class="bg-rose-600 hover:bg-rose-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-rose-600/20 active:scale-95 cursor-pointer">
+                            No es cuadrática ❌
+                        </button>
+                    </div>
+
+                    <div id="l1-step-2" class="hidden flex flex-col gap-4 mt-2">
+                        <p class="text-xs md:text-sm font-semibold text-amber-300">¡Correcto! Ahora identifica los coeficientes de la forma general $ax^2 + bx + c = 0$:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between">
+                                <span class="text-rose-400 font-bold">a =</span>
+                                <input type="number" id="input-a" class="w-20 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-slate-100 focus:outline-none focus:border-rose-500" placeholder="0">
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between">
+                                <span class="text-emerald-400 font-bold">b =</span>
+                                <input type="number" id="input-b" class="w-20 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-slate-100 focus:outline-none focus:border-emerald-500" placeholder="0">
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between">
+                                <span class="text-cyan-400 font-bold">c =</span>
+                                <input type="number" id="input-c" class="w-20 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-slate-100 focus:outline-none focus:border-cyan-500" placeholder="0">
+                            </div>
+                        </div>
+                        <button onclick="verifyL1Coefficients()" class="mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-indigo-600/30 cursor-pointer">
+                            Verificar Coeficientes 🚀
+                        </button>
+                    </div>
+                </div>
+                <div id="l1-feedback" class="text-xs md:text-sm font-medium text-center min-h-[24px]"></div>
+            </div>
+        </section>
+
+        <!-- ================= NIVEL 2 ================= -->
+        <section id="level-1-view" class="level-view hidden flex-1 flex flex-col gap-4">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl backdrop-blur">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider bg-purple-500/20 text-purple-300 px-2.5 py-1 rounded-lg border border-purple-500/30">Nivel 2: Completar Cuadrados (Generador Aleatorio)</span>
+                    <span id="l2-progress" class="text-xs text-slate-400 font-medium">Reto aleatorio</span>
+                </div>
+                <h2 class="text-base md:text-lg font-bold text-slate-100 mb-1">Técnica Algebraica y Representación Geométrica</h2>
+                <p class="text-xs md:text-sm text-slate-400 mb-4">Completa los pasos algebraicos para aislar el término independiente, sumar $\left(\frac{b}{2}\right)^2$ en ambos lados y factorizar el binomio.</p>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-6 flex flex-col gap-4 bg-slate-950/80 border border-slate-800 p-4 md:p-6 rounded-2xl">
+                        <div class="text-xl md:text-2xl font-black text-purple-300 font-mono text-center" id="l2-eq-display">
+                            x² + 6x + 5 = 0
+                        </div>
+
+                        <!-- Paso 1 -->
+                        <div id="l2-step-trans" class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2">
+                            <span class="text-xs font-semibold text-slate-300">Paso 1: Transponer el término independiente al lado derecho:</span>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-mono text-sm text-slate-200" id="l2-p1-label">x² + 6x =</span>
+                                <input type="number" id="l2-input-c-moved" class="w-24 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-cyan-400 focus:outline-none focus:border-cyan-500" placeholder="0">
+                                <button onclick="verifyL2Trans()" class="bg-indigo-600 hover:bg-indigo-500 text-xs font-bold px-3 py-2 rounded-lg text-white cursor-pointer">Validar</button>
+                            </div>
+                        </div>
+
+                        <!-- Paso 2 -->
+                        <div id="l2-step-add" class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2 opacity-50 pointer-events-none">
+                            <span class="text-xs font-semibold text-slate-300">Paso 2: Calcular $\left(\frac{b}{2}\right)^2$ y sumarlo en ambos lados:</span>
+                            <div class="text-xs text-amber-300/90 font-mono">b = <span id="l2-val-b">6</span> $\implies \frac{b}{2} = $ <span id="l2-val-b2">3</span> $\implies \left(\frac{b}{2}\right)^2 = $ <span id="l2-val-sq">9</span></div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-mono text-xs text-slate-200" id="l2-p2-label">x² + 6x +</span>
+                                <input type="number" id="l2-input-sq" class="w-16 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-amber-400 focus:outline-none focus:border-amber-500" placeholder="0">
+                                <span class="font-mono text-xs text-slate-200">= Der +</span>
+                                <input type="number" id="l2-input-sq-right" class="w-16 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-amber-400 focus:outline-none focus:border-amber-500" placeholder="0">
+                                <button onclick="verifyL2Square()" class="bg-indigo-600 hover:bg-indigo-500 text-xs font-bold px-3 py-2 rounded-lg text-white cursor-pointer">Validar</button>
+                            </div>
+                        </div>
+
+                        <!-- Paso 3 -->
+                        <div id="l2-step-fact" class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2 opacity-50 pointer-events-none">
+                            <span class="text-xs font-semibold text-slate-300">Paso 3: Expresar como Binomio Cuadrado $(x + h)^2 = k$:</span>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-mono text-xs text-slate-200">(x +</span>
+                                <input type="number" id="l2-input-h" class="w-14 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-sm font-bold text-purple-400 focus:outline-none focus:border-purple-500" placeholder="0">
+                                <span class="font-mono text-xs text-slate-200">)² =</span>
+                                <input type="number" id="l2-input-k" class="w-16 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-sm font-bold text-cyan-400 focus:outline-none focus:border-cyan-500" placeholder="0">
+                                <button onclick="verifyL2Factor()" class="bg-emerald-600 hover:bg-emerald-500 text-xs font-bold px-3 py-2 rounded-lg text-white cursor-pointer">Siguiente Reto Aleatorio 🎲</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-center">
+                        <span class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Interpretación Geométrica (Área)</span>
+                        <canvas id="l2-canvas" class="w-full max-w-[320px] h-[260px] rounded-xl bg-slate-900/50 border border-slate-800"></canvas>
+                        <p class="text-[11px] text-slate-400 text-center mt-3">Visualización del cuadrado de lado $x$, los rectángulos de área $\frac{b}{2}x$ y el completado de la esquina.</p>
+                    </div>
+                </div>
+                <div id="l2-feedback" class="text-xs md:text-sm font-medium text-center mt-3 min-h-[24px]"></div>
+            </div>
+        </section>
+
+        <!-- ================= NIVEL 3 ================= -->
+        <section id="level-2-view" class="level-view hidden flex-1 flex flex-col gap-4">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl backdrop-blur">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded-lg border border-emerald-500/30">Nivel 3: Fábrica de Cohetes (Fórmula General / Bhaskara Aleatorio)</span>
+                    <span id="l3-progress" class="text-xs text-slate-400 font-medium">Reto aleatorio</span>
+                </div>
+                <h2 class="text-base md:text-lg font-bold text-slate-100 mb-1">Cálculo del Discriminante y Raíces Reales</h2>
+                <p class="text-xs md:text-sm text-slate-400 mb-4">Calcula el discriminante $\Delta = b^2 - 4ac$ y obtén las raíces exactas $x_1, x_2$ para lanzar el cohete.</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-6 flex flex-col gap-4 bg-slate-950/80 border border-slate-800 p-4 md:p-6 rounded-2xl">
+                        <div class="text-xl md:text-2xl font-black text-emerald-300 font-mono text-center" id="l3-eq-display">
+                            2x² - 8x + 6 = 0
+                        </div>
+
+                        <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2">
+                            <span class="text-xs font-semibold text-slate-300">1. Calcular Discriminante ($\Delta = b^2 - 4ac$):</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-mono text-sm text-slate-300">$\Delta$ =</span>
+                                <input type="number" id="l3-input-delta" class="w-24 bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-base font-bold text-amber-400 focus:outline-none focus:border-amber-500" placeholder="0">
+                                <button onclick="verifyL3Delta()" class="bg-indigo-600 hover:bg-indigo-500 text-xs font-bold px-3 py-2 rounded-lg text-white cursor-pointer">Verificar $\Delta$</button>
+                            </div>
+                        </div>
+
+                        <div id="l3-step-roots" class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-xl flex flex-col gap-2 opacity-50 pointer-events-none">
+                            <span class="text-xs font-semibold text-slate-300">2. Calcular Raíces ($x = \frac{-b \pm \sqrt{\Delta}}{2a}$):</span>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[11px] text-cyan-400 font-medium">Raíz menor ($x_1$):</span>
+                                    <input type="number" step="0.1" id="l3-input-x1" class="bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500" placeholder="0">
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <span class="text-[11px] text-cyan-400 font-medium">Raíz mayor ($x_2$):</span>
+                                    <input type="number" step="0.1" id="l3-input-x2" class="bg-slate-950 border border-slate-700 text-center rounded-lg py-1.5 text-sm font-bold text-slate-100 focus:outline-none focus:border-cyan-500" placeholder="0">
+                                </div>
+                            </div>
+                            <button onclick="verifyL3Roots()" class="mt-2 bg-emerald-600 hover:bg-emerald-500 text-xs font-bold py-2.5 px-4 rounded-lg text-white cursor-pointer shadow-lg shadow-emerald-600/20">Lanzar Cohete 🚀</button>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-center">
+                        <span class="text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">Simulador de Trayectoria</span>
+                        <canvas id="l3-canvas" class="w-full max-w-[320px] h-[260px] rounded-xl bg-slate-900/50 border border-slate-800"></canvas>
+                        <p class="text-[11px] text-slate-400 text-center mt-3">El cohete impacta exactamente en las raíces reales calculadas sobre el eje X.</p>
+                    </div>
+                </div>
+                <div id="l3-feedback" class="text-xs md:text-sm font-medium text-center mt-3 min-h-[24px]"></div>
+            </div>
+        </section>
+
+        <!-- ================= NIVEL 4 ================= -->
+        <section id="level-3-view" class="level-view hidden flex-1 flex flex-col gap-4">
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-xl backdrop-blur">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider bg-pink-500/20 text-pink-300 px-2.5 py-1 rounded-lg border border-pink-500/30">Nivel 4: Arquitecto de Parábolas (Objetivo Aleatorio)</span>
+                    <span id="l4-progress" class="text-xs text-slate-400 font-medium">Reto aleatorio</span>
+                </div>
+                <h2 class="text-base md:text-lg font-bold text-slate-100 mb-1">Representación Gráfica y Parámetros</h2>
+                <p class="text-xs md:text-sm text-slate-400 mb-4">Ajusta los deslizadores de $a$, $b$ y $c$ para superponer tu curva azul exactamente sobre la parábola objetivo dorada punteada.</p>
+
+                <div class="mb-4 flex items-center justify-between flex-wrap gap-2">
+                    <button onclick="toggleL4Hint()" id="l4-hint-btn" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-xs font-semibold px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>💡 Pista: ver puntos clave</span>
+                    </button>
+                    <span class="text-xs text-slate-400">Objetivo: <strong id="l4-target-eq-text" class="text-amber-300 font-mono">y = 0.5x² - 2x</strong></span>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                    <div class="lg:col-span-6 bg-slate-950/80 border border-slate-800 p-4 rounded-2xl flex flex-col items-center justify-center">
+                        <canvas id="l4-canvas" class="w-full max-w-[340px] h-[300px] rounded-xl bg-slate-900/50 border border-slate-800 cursor-crosshair"></canvas>
+                        <div class="flex items-center justify-between w-full mt-3 px-2 text-xs">
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-amber-400 inline-block border-b border-dashed border-amber-400"></span><span class="text-slate-300 font-medium">Objetivo</span></div>
+                            <div class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-cyan-400 inline-block"></span><span class="text-slate-300 font-medium">Tu Parábola</span></div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 flex flex-col gap-4 bg-slate-950/80 border border-slate-800 p-4 md:p-6 rounded-2xl">
+                        <div id="l4-eq-display" class="text-xl md:text-2xl font-black text-center font-mono tracking-wide py-1 text-cyan-300">
+                            y = 0.5x² + 0x + 0
+                        </div>
+
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-rose-400">Parámetro a (Concavidad)</span>
+                                <span id="val-a" class="font-mono font-bold text-rose-300">0.5</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="adjustParam('a', -0.5)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer">-</button>
+                                <input type="range" id="range-a" min="-3" max="3" step="0.5" value="0.5" oninput="onParamChange()" class="flex-1 accent-rose-500 cursor-pointer">
+                                <button onclick="adjustParam('a', 0.5)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer">+</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-emerald-400">Parámetro b (Desplazamiento)</span>
+                                <span id="val-b" class="font-mono font-bold text-emerald-300">0</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="adjustParam('b', -1)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer">-</button>
+                                <input type="range" id="range-b" min="-8" max="8" step="1" value="0" oninput="onParamChange()" class="flex-1 accent-emerald-500 cursor-pointer">
+                                <button onclick="adjustParam('b', 1)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer">+</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-cyan-400">Parámetro c (Corte eje Y)</span>
+                                <span id="val-c" class="font-mono font-bold text-cyan-300">0</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="adjustParam('c', -1)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer">-</button>
+                                <input type="range" id="range-c" min="-6" max="6" step="1" value="0" oninput="onParamChange()" class="flex-1 accent-cyan-500 cursor-pointer">
+                                <button onclick="adjustParam('c', 1)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer">+</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mt-1">
+                            <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-center">
+                                <div class="text-[10px] text-slate-400 uppercase font-semibold">Vértice V(h, k)</div>
+                                <div id="l4-vertex-text" class="text-xs font-mono font-bold text-amber-400 mt-0.5">(0.00, 0.00)</div>
+                            </div>
+                            <div class="bg-slate-900/80 border border-slate-800 p-2.5 rounded-xl text-center">
+                                <div class="text-[10px] text-slate-400 uppercase font-semibold">Eje de Simetría</div>
+                                <div id="l4-axis-text" class="text-xs font-mono font-bold text-indigo-400 mt-0.5">x = 0.00</div>
+                            </div>
+                        </div>
+
+                        <button onclick="verifyL4Match()" class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-pink-600/30 cursor-pointer">
+                            Verificar Coincidencia 🎯
+                        </button>
+                    </div>
+                </div>
+                <div id="l4-feedback" class="text-xs md:text-sm font-medium text-center mt-3 min-h-[24px]"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900/80 border-t border-slate-800 py-3 px-4 text-center text-xs text-slate-400 mt-auto">
+        Desarrollado para el Marco Curricular Común de la Educación Media Superior (MCCEMS) • Tuxtepec, Oaxaca
+    </footer>
+
+    <!-- SCRIPT DE LÓGICA CON GENERADORES ALEATORIOS -->
+    <script>
+        let score = 0;
+        let streak = 0;
+        let currentLevel = 0;
+
+        function updateHUD() {
+            document.getElementById('hud-score').innerText = `${score} pts`;
+            document.getElementById('hud-streak').innerText = streak;
+        }
+
+        function addScore(pts) {
+            score += pts;
+            streak += 1;
+            updateHUD();
+        }
+
+        function resetStreak() {
+            streak = 0;
+            updateHUD();
+        }
+
+        function switchLevel(lvlIndex) {
+            currentLevel = lvlIndex;
+            const views = document.querySelectorAll('.level-view');
+            views.forEach((v, idx) => {
+                if (idx === lvlIndex) v.classList.remove('hidden');
+                else v.classList.add('hidden');
+            });
+
+            const tabs = document.querySelectorAll('.level-tab');
+            tabs.forEach((t, idx) => {
+                if (idx === lvlIndex) {
+                    t.className = "level-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 flex items-center gap-1.5";
+                } else {
+                    t.className = "level-tab px-3.5 py-2 rounded-xl text-xs md:text-sm font-semibold transition-all bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200 flex items-center gap-1.5";
+                }
+            });
+
+            if (lvlIndex === 1) drawL2Canvas();
+            if (lvlIndex === 2) drawL3Canvas();
+            if (lvlIndex === 3) drawL4Canvas();
+        }
+
+        // Utilidad de enteros aleatorios entre min y max (incluidos)
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // ================= NIVEL 1 ALEATORIO =================
+        let currentL1 = { expr: "", isQuad: true, a: 1, b: 0, c: 0 };
+
+        function loadL1Challenge() {
+            const types = ['standard', 'linear_distractor', 'missing_b', 'missing_c', 'cubic_distractor'];
+            const chosenType = types[randomInt(0, types.length - 1)];
+
+            if (chosenType === 'standard') {
+                let a = randomInt(1, 4);
+                let b = randomInt(-8, 8); while(b===0) b = randomInt(-8, 8);
+                let c = randomInt(-10, 10);
+                let bStr = b > 0 ? `+ ${b}x` : `- ${Math.abs(b)}x`;
+                let cStr = c > 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+                currentL1 = { expr: `${a === 1 ? '' : a}x² ${bStr} ${cStr} = 0`, isQuad: true, a: a, b: b, c: c };
+            } else if (chosenType === 'linear_distractor') {
+                let m = randomInt(2, 9);
+                let n = randomInt(-12, 12);
+                currentL1 = { expr: `${m}x ${n >= 0 ? '+ ' + n : '- ' + Math.abs(n)} = 0`, isQuad: false, a: 0, b: 0, c: 0 };
+            } else if (chosenType === 'missing_b') {
+                let a = randomInt(1, 5);
+                let c = randomInt(-25, -1);
+                currentL1 = { expr: `${a === 1 ? '' : a}x² ${c} = 0`, isQuad: true, a: a, b: 0, c: c };
+            } else if (chosenType === 'missing_c') {
+                let a = randomInt(1, 4);
+                let b = randomInt(-7, 7); while(b===0) b = randomInt(-7, 7);
+                let bStr = b > 0 ? `+ ${b}x` : `- ${Math.abs(b)}x`;
+                currentL1 = { expr: `${a === 1 ? '' : a}x² ${bStr} = 0`, isQuad: true, a: a, b: b, c: 0 };
+            } else {
+                let d = randomInt(2, 3);
+                let a = randomInt(1, 3);
+                currentL1 = { expr: `${d}x³ + ${a}x² - 5 = 0`, isQuad: false, a: 0, b: 0, c: 0 };
+            }
+
+            document.getElementById('l1-expression').innerText = currentL1.expr;
+            document.getElementById('l1-step-1').classList.remove('hidden');
+            document.getElementById('l1-step-2').classList.add('hidden');
+            document.getElementById('l1-feedback').innerText = "";
+            document.getElementById('input-a').value = "";
+            document.getElementById('input-b').value = "";
+            document.getElementById('input-c').value = "";
+        }
+
+        function answerL1(userAns) {
+            const fb = document.getElementById('l1-feedback');
+            if (userAns === currentL1.isQuad) {
+                addScore(50);
+                if (currentL1.isQuad) {
+                    fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Correcto! Es una ecuación cuadrática. Ahora indica sus coeficientes.</span>`;
+                    document.getElementById('l1-step-1').classList.add('hidden');
+                    document.getElementById('l1-step-2').classList.remove('hidden');
+                } else {
+                    fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Excelente acierto! No es cuadrática. Generando nuevo reto...</span>`;
+                    setTimeout(loadL1Challenge, 1500);
+                }
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Incorrecto. Analiza el exponente máximo de x.</span>`;
+            }
+        }
+
+        function verifyL1Coefficients() {
+            const ua = parseFloat(document.getElementById('input-a').value);
+            const ub = parseFloat(document.getElementById('input-b').value);
+            const uc = parseFloat(document.getElementById('input-c').value);
+            const fb = document.getElementById('l1-feedback');
+
+            if (ua === currentL1.a && ub === currentL1.b && uc === currentL1.c) {
+                addScore(100);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Coeficientes correctos! Generando nuevo reto al azar...</span>`;
+                setTimeout(loadL1Challenge, 1800);
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Valores incorrectos. Revisa a, b y c en la forma ax² + bx + c = 0.</span>`;
+            }
+        }
+
+        // ================= NIVEL 2 ALEATORIO =================
+        let currentL2 = { b: 6, c: 5, moved: -5, sq: 9, h: 3, k: 4 };
+
+        function loadL2Challenge() {
+    let halfB = randomInt(-5, 5); while(halfB === 0) halfB = randomInt(-5, 5);
+    let b = halfB * 2;
+    let h = halfB; // El binomio es (x + h) donde h es b/2
+    
+    // Generamos un término independiente c aleatorio
+    let c = randomInt(-10, 10); while(c === 0) c = randomInt(-10, 10);
+    
+    // Al pasar c a la derecha queda -c, y al sumar (b/2)^2 queda -c + sq
+    let sq = Math.pow(halfB, 2);
+    let rightSideResult = -c + sq;
+
+    currentL2 = { 
+        b: b, 
+        c: c, 
+        moved: -c, 
+        sq: sq, 
+        h: h,               // Valor de h en (x + h)
+        k: rightSideResult  // Resultado aritmético correcto del lado derecho
+    };
+
+    document.getElementById('l2-eq-display').innerText = `x² ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x ${c >= 0 ? '+ ' + c : '- ' + Math.abs(c)} = 0`;
+    document.getElementById('l2-p1-label').innerText = `x² ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x =`;
+    document.getElementById('l2-p2-label').innerText = `x² ${b >= 0 ? '+ ' + b : '- ' + Math.abs(b)}x +`;
+
+    document.getElementById('l2-val-b').innerText = b;
+    document.getElementById('l2-val-b2').innerText = halfB;
+    document.getElementById('l2-val-sq').innerText = sq;
+
+    document.getElementById('l2-input-c-moved').value = "";
+    document.getElementById('l2-input-sq').value = "";
+    document.getElementById('l2-input-sq-right').value = "";
+    document.getElementById('l2-input-h').value = "";
+    document.getElementById('l2-input-k').value = "";
+
+    document.getElementById('l2-step-trans').style.opacity = "1";
+    document.getElementById('l2-step-trans').style.pointerEvents = "auto";
+    document.getElementById('l2-step-add').style.opacity = "0.5";
+    document.getElementById('l2-step-add').style.pointerEvents = "none";
+    document.getElementById('l2-step-fact').style.opacity = "0.5";
+    document.getElementById('l2-step-fact').style.pointerEvents = "none";
+    document.getElementById('l2-feedback').innerText = "";
+    drawL2Canvas();
+}
+
+        function verifyL2Trans() {
+            const val = parseFloat(document.getElementById('l2-input-c-moved').value);
+            const fb = document.getElementById('l2-feedback');
+            if (val === currentL2.moved) {
+                addScore(50);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Correcto! Término independiente transpuesto.</span>`;
+                document.getElementById('l2-step-add').style.opacity = "1";
+                document.getElementById('l2-step-add').style.pointerEvents = "auto";
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Revisa el cambio de signo al pasar al otro lado.</span>`;
+            }
+        }
+
+        function verifyL2Square() {
+            const sqVal = currentL2.sq;
+            const val1 = parseFloat(document.getElementById('l2-input-sq').value);
+            const val2 = parseFloat(document.getElementById('l2-input-sq-right').value);
+            const fb = document.getElementById('l2-feedback');
+
+            if (val1 === sqVal && val2 === sqVal) {
+                addScore(75);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Muy bien! Sumado en ambos lados de la igualdad.</span>`;
+                document.getElementById('l2-step-fact').style.opacity = "1";
+                document.getElementById('l2-step-fact').style.pointerEvents = "auto";
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Recuerda que (b/2)² debe sumarse tanto a la izquierda como a la derecha.</span>`;
+            }
+        }
+
+        function verifyL2Factor() {
+            const hVal = parseFloat(document.getElementById('l2-input-h').value);
+            const kVal = parseFloat(document.getElementById('l2-input-k').value);
+            const fb = document.getElementById('l2-feedback');
+
+            if (hVal === currentL2.h && kVal === currentL2.k) {
+                addScore(100);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Excelente! Vértice V(${-currentL2.h}, ${currentL2.k}) calculado. Nuevo reto al azar...</span>`;
+                setTimeout(loadL2Challenge, 2000);
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Revisa el binomio (x + h)² y el resultado aritmético derecho.</span>`;
+            }
+        }
+
+        function drawL2Canvas() {
+            const canvas = document.getElementById('l2-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth - 32;
+            canvas.height = 260;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            ctx.fillStyle = '#6366f1';
+            ctx.fillRect(cx - 60, cy - 60, 80, 80);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 14px Inter';
+            ctx.fillText('x²', cx - 30, cy - 15);
+
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(cx + 22, cy - 60, 40, 80);
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(cx - 60, cy + 22, 80, 40);
+
+            ctx.strokeStyle = '#f59e0b';
+            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 2;
+            ctx.strokeRect(cx + 22, cy + 22, 40, 40);
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = '11px Inter';
+            ctx.fillText('(b/2)²', cx + 24, cy + 45);
+        }
+
+        // ================= NIVEL 3 ALEATORIO =================
+        let currentL3 = { delta: 4, x1: 1, x2: 3 };
+
+        function loadL3Challenge() {
+            // Generar raíces enteras aleatorias x1 y x2
+            let x1 = randomInt(-4, 4);
+            let x2 = randomInt(-4, 4); while(x2 === x1) x2 = randomInt(-4, 4);
+            if(x1 > x2) { let temp = x1; x1 = x2; x2 = temp; }
+
+            let a = randomInt(1, 2);
+            // Forma factorizada a(x - x1)(x - x2) = ax^2 - a(x1+x2)x + a*x1*x2 = 0
+            let b = -a * (x1 + x2);
+            let c = a * x1 * x2;
+            let delta = Math.pow(b, 2) - 4 * a * c;
+
+            currentL3 = { delta: delta, x1: x1, x2: x2 };
+
+            let aStr = a === 1 ? '' : a;
+            let bStr = b >= 0 ? `+ ${b}x` : `- ${Math.abs(b)}x`;
+            let cStr = c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+            document.getElementById('l3-eq-display').innerText = `${aStr}x² ${bStr} ${cStr} = 0`;
+
+            document.getElementById('l3-input-delta').value = "";
+            document.getElementById('l3-input-x1').value = "";
+            document.getElementById('l3-input-x2').value = "";
+            document.getElementById('l3-step-roots').style.opacity = "0.5";
+            document.getElementById('l3-step-roots').style.pointerEvents = "none";
+            document.getElementById('l3-feedback').innerText = "";
+            drawL3Canvas();
+        }
+
+        function verifyL3Delta() {
+            const val = parseFloat(document.getElementById('l3-input-delta').value);
+            const fb = document.getElementById('l3-feedback');
+            if (val === currentL3.delta) {
+                addScore(50);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Discriminante correcto! Δ = ${currentL3.delta}. Procede con las raíces.</span>`;
+                document.getElementById('l3-step-roots').style.opacity = "1";
+                document.getElementById('l3-step-roots').style.pointerEvents = "auto";
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Discriminante incorrecto. Revisa b² - 4ac.</span>`;
+            }
+        }
+
+        function verifyL3Roots() {
+            const ux1 = parseFloat(document.getElementById('l3-input-x1').value);
+            const ux2 = parseFloat(document.getElementById('l3-input-x2').value);
+            const fb = document.getElementById('l3-feedback');
+
+            if ((ux1 === currentL3.x1 && ux2 === currentL3.x2) || (ux1 === currentL3.x2 && ux2 === currentL3.x1)) {
+                addScore(100);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">¡Cohete lanzado con éxito! Raíces correctas. Siguiente reto al azar...</span>`;
+                setTimeout(loadL3Challenge, 2000);
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Raíces incorrectas. Verifica la fórmula general.</span>`;
+            }
+        }
+
+        function drawL3Canvas() {
+            const canvas = document.getElementById('l3-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth - 32;
+            canvas.height = 260;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, 180); ctx.lineTo(canvas.width, 180);
+            ctx.moveTo(canvas.width / 2, 0); ctx.lineTo(canvas.width / 2, canvas.height);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            let x1 = currentL3.x1, x2 = currentL3.x2;
+            for(let px = 20; px < canvas.width - 20; px++) {
+                let x = (px - canvas.width/2) / 30;
+                let y = (x - x1) * (x - x2);
+                let py = 180 - y * 25;
+                if(px === 20) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+        }
+
+        // ================= NIVEL 4 ALEATORIO =================
+        let currentL4 = { a: 0.5, b: -2, c: 0, eqText: "y = 0.5x² - 2x" };
+        let showHint = false;
+
+        function loadL4Challenge() {
+            const options = [
+                { a: 0.5, b: -2, c: 0, eqText: "y = 0.5x² - 2x" },
+                { a: 1, b: -4, c: 3, eqText: "y = x² - 4x + 3" },
+                { a: -1, b: 2, c: 3, eqText: "y = -x² + 2x + 3" },
+                { a: 1, b: -2, c: -3, eqText: "y = x² - 2x - 3" },
+                { a: -0.5, b: 2, c: 1, eqText: "y = -0.5x² + 2x + 1" }
+            ];
+            currentL4 = options[randomInt(0, options.length - 1)];
+
+            document.getElementById('l4-target-eq-text').innerText = currentL4.eqText;
+            document.getElementById('range-a').value = 1;
+            document.getElementById('range-b').value = 0;
+            document.getElementById('range-c').value = 0;
+            showHint = false;
+            document.getElementById('l4-hint-btn').classList.remove('bg-amber-500/20', 'border-amber-500');
+            document.getElementById('l4-feedback').innerText = "";
+            onParamChange();
+        }
+
+        function adjustParam(param, delta) {
+            const rng = document.getElementById(`range-${param}`);
+            let val = parseFloat(rng.value) + delta;
+            rng.value = val;
+            onParamChange();
+        }
+
+        function toggleL4Hint() {
+            showHint = !showHint;
+            const btn = document.getElementById('l4-hint-btn');
+            if(showHint) btn.classList.add('bg-amber-500/20', 'border-amber-500');
+            else btn.classList.remove('bg-amber-500/20', 'border-amber-500');
+            drawL4Canvas();
+        }
+
+        function onParamChange() {
+            const a = parseFloat(document.getElementById('range-a').value);
+            const b = parseFloat(document.getElementById('range-b').value);
+            const c = parseFloat(document.getElementById('range-c').value);
+
+            document.getElementById('val-a').innerText = a;
+            document.getElementById('val-b').innerText = b;
+            document.getElementById('val-c').innerText = c;
+
+            let eqStr = `y = ${a}x² `;
+            eqStr += b >= 0 ? `+ ${b}x ` : `- ${Math.abs(b)}x `;
+            eqStr += c >= 0 ? `+ ${c}` : `- ${Math.abs(c)}`;
+            document.getElementById('l4-eq-display').innerText = eqStr;
+
+            if(a !== 0) {
+                let h = -b / (2 * a);
+                let k = a*h*h + b*h + c;
+                document.getElementById('l4-vertex-text').innerText = `(${h.toFixed(2)}, ${k.toFixed(2)})`;
+                document.getElementById('l4-axis-text').innerText = `x = ${h.toFixed(2)}`;
+            }
+
+            drawL4Canvas();
+        }
+
+        function drawL4Canvas() {
+            const canvas = document.getElementById('l4-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth - 32;
+            canvas.height = 300;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2 + 30;
+            const scale = 26;
+
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let x = 0; x < canvas.width; x += scale) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y = 0; y < canvas.height; y += scale) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, cy); ctx.lineTo(canvas.width, cy);
+            ctx.moveTo(cx, 0); ctx.lineTo(cx, canvas.height);
+            ctx.stroke();
+
+            // Parábola objetivo aleatoria
+            ctx.strokeStyle = '#f59e0b';
+            ctx.setLineDash([5, 5]);
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            for(let px = 0; px < canvas.width; px += 2) {
+                let x = (px - cx) / scale;
+                let y = currentL4.a * x * x + currentL4.b * x + currentL4.c;
+                let py = cy - y * scale;
+                if(px === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Parábola del usuario
+            const ua = parseFloat(document.getElementById('range-a').value);
+            const ub = parseFloat(document.getElementById('range-b').value);
+            const uc = parseFloat(document.getElementById('range-c').value);
+
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for(let px = 0; px < canvas.width; px += 2) {
+                let x = (px - cx) / scale;
+                let y = ua * x * x + ub * x + uc;
+                let py = cy - y * scale;
+                if(px === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            if(showHint) {
+                let h_obj = -currentL4.b / (2 * currentL4.a);
+                let k_obj = currentL4.a * h_obj * h_obj + currentL4.b * h_obj + currentL4.c;
+                let vpx = cx + h_obj * scale;
+                let vpy = cy - k_obj * scale;
+
+                ctx.fillStyle = '#f59e0b';
+                ctx.beginPath(); ctx.arc(vpx, vpy, 5, 0, Math.PI * 2); ctx.fill();
+
+                let cpy = cy - currentL4.c * scale;
+                ctx.fillStyle = '#38bdf8';
+                ctx.beginPath(); ctx.arc(cx, cpy, 4, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function verifyL4Match() {
+            const ua = parseFloat(document.getElementById('range-a').value);
+            const ub = parseFloat(document.getElementById('range-b').value);
+            const uc = parseFloat(document.getElementById('range-c').value);
+            const fb = document.getElementById('l4-feedback');
+
+            if(ua === currentL4.a && ub === currentL4.b && uc === currentL4.c) {
+                addScore(150);
+                fb.innerHTML = `<span class="text-emerald-400 font-bold">🎉 ¡Perfecto! Parábolas superpuestas. Cargando nuevo reto gráfico...</span>`;
+                setTimeout(loadL4Challenge, 2500);
+            } else {
+                resetStreak();
+                fb.innerHTML = `<span class="text-rose-400 font-bold">Aún no coinciden. Usa la pista 💡 para verificar el vértice y corte en Y.</span>`;
+            }
+        }
+
+        window.onload = function() {
+            updateHUD();
+            loadL1Challenge();
+            loadL2Challenge();
+            loadL3Challenge();
+            loadL4Challenge();
+        };
+
+        window.onresize = function() {
+            drawL2Canvas();
+            drawL3Canvas();
+            drawL4Canvas();
+        };
+    </script>
+</body>
+</html>
