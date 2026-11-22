@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Portal de Recursos Digitales | COBAO Plantel 21 Ojitlán</title>
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-item: #0f172a;
+      --bg-item-hover: #1e1b4b;
+      --border-subtle: #334155;
+      --border-accent: #6366f1;
+      --text-primary: #f8fafc;
+      --text-secondary: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent-indigo: #818cf8;
+      --accent-sky: #38bdf8;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.45;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1e293b 0%, #1e1b4b 100%);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    .institution-tag {
+      display: inline-block;
+      background-color: rgba(56, 189, 248, 0.12);
+      color: var(--accent-sky);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    header h1 {
+      font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: clamp(0.88rem, 2.2vw, 1rem);
+      color: var(--text-muted);
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .subject-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .subject-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .subject-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(1.08rem, 2.8vw, 1.3rem);
+      font-weight: 800;
+      color: var(--accent-indigo);
+    }
+
+    .subject-badge {
+      background-color: #0f172a;
+      color: var(--accent-amber);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .resource-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background-color: var(--bg-item);
+      border: 2px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 15px 16px;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .resource-link:hover,
+    .resource-link:focus-visible {
+      background-color: var(--bg-item-hover);
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .resource-link:active {
+      transform: translateY(0);
+    }
+
+    .resource-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .resource-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.45rem;
+      flex-shrink: 0;
+    }
+
+    .icon-lab {
+      background-color: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .icon-eval {
+      background-color: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+    }
+
+    .resource-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .resource-name {
+      font-size: clamp(0.98rem, 2.4vw, 1.1rem);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .resource-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .resource-file {
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-sky);
+      opacity: 0.85;
+      word-break: break-all;
+    }
+
+    .resource-arrow {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-indigo);
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 14px 16px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+      background-color: var(--bg-card);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="institution-tag">COBAO PLANTEL 21 · SAN LUCAS OJITLÁN</div>
+    <h1>📐 Laboratorio Digital de Matemáticas</h1>
+    <p>Selecciona una actividad interactiva para comenzar</p>
+  </header>
+
+  <main>
+    <section class="subject-card" aria-labelledby="cat-pm3">
+      <div class="subject-header">
+        <h2 id="cat-pm3" class="subject-title">
+          <span>📘</span>
+          <span>Pensamiento matemático III</span>
+        </h2>
+        <span class="subject-badge">2 actividades disponibles</span>
+      </div>
+
+      <div class="links-grid">
+        <a href="cuadraticas_ludicas.html" class="resource-link">
+          <div class="resource-left">
+            <div class="resource-icon icon-lab">🎮</div>
+            <div class="resource-info">
+              <span class="resource-name">Cuadráticas Lúdicas</span>
+              <span class="resource-desc">Actividad interactiva y práctica visual de ecuaciones cuadráticas</span>
+              <span class="resource-file">cuadraticas_ludicas.html</span>
+            </div>
+          </div>
+          <span class="resource-arrow">➔</span>
+        </a>
+
+        <a href="evaluacion_cuadraticas_digital_PMIII.html" class="resource-link">
+          <div class="resource-left">
+            <div class="resource-icon icon-eval">📝</div>
+            <div class="resource-info">
+              <span class="resource-name">Evaluación Digital: Ecuaciones Cuadráticas</span>
+              <span class="resource-desc">Evaluación sumativa aleatoria (15 reactivos y gráficas)</span>
+              <span class="resource-file">evaluacion_cuadraticas_digital_PMIII.html</span>
+            </div>
+          </div>
+          <span class="resource-arrow">➔</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Portal Educativo Interactivo · Compatible con dispositivos móviles y computadora
+  </footer>
+
+</body>
+</html>
